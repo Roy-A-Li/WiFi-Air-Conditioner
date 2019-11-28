@@ -25,10 +25,12 @@ LiquidCrystal_I2C lcd(0x27, 16, 2); // set the LCD address to 0x27 for a 16 char
 
 void setup()
 {
+  // Starting values
   desiredTemp = 70;
   tempCounter = 0;
   toggleRelay = 0;
 
+  // Relay and push buttons
   pinMode(relaisPin, OUTPUT);
   pinMode(buttonOne, INPUT);
   pinMode(buttonTwo, INPUT);
@@ -38,16 +40,17 @@ void setup()
 
   sensors.begin();
 
+  // Get current temperature in Fahrenheit
   sensors.requestTemperatures();
   temperature = sensors.getTempFByIndex(0);
 
-  lcd.init();  //initialize the lcd
-  lcd.backlight();  //open the backlight
+  lcd.init();  // Initialize the lcd
+  lcd.backlight();  // Open the backlight
 
-  lcd.setCursor(15, 1); // set the cursor to column 2, line 1
-  lcd.print("o");
+  lcd.setCursor(15, 1); // Set the cursor to column 15, line 2
+  lcd.print("o"); // Begins in an off state
 
-  // degree symbol
+  // Degree symbol configuration
   byte degreeSymbol[8] = {
     0b00110,
     0b01001,
@@ -58,12 +61,12 @@ void setup()
     0b00000,
     0b00000
   };
-  // create degree custom character
   lcd.createChar(0, degreeSymbol);
 }
 
 void loop()
 {
+  // Requests temperature every 660ms
   if (tempCounter == 3) {
     Serial.println("Requesting temperatures...");
     sensors.requestTemperatures();
@@ -76,36 +79,42 @@ void loop()
     tempCounter = 0;
   }
 
-  if (digitalRead(buttonTwo) == LOW && digitalRead(buttonThree) == HIGH) {
+  // Increases temperature when buttonThree is pressed
+  if (digitalRead(buttonTwo) == LOW && digitalRead(buttonThree) == HIGH 
+      && desiredTemp <= 120) {
     desiredTemp++;
   }
 
-  if (digitalRead(buttonThree) == LOW && digitalRead(buttonTwo) == HIGH) {
+  // Decreases temperature when buttonTwo is pressed
+  if (digitalRead(buttonThree) == LOW && digitalRead(buttonTwo) == HIGH
+      && desiredTemp >= -120) {
     desiredTemp--;
   }
 
-  lcd.setCursor(0, 0); // set the cursor to column 0, line 0
-  lcd.print("Current: ");  // Print a message to the LCD
+  lcd.setCursor(0, 0); // Set the cursor to column 0, line 1
+  lcd.print("Current: ");
   lcd.print(temperature);
   lcd.print((char)0);
   lcd.print("F");
 
-  lcd.setCursor(0, 1); // set the cursor to column 0, line 1
-  lcd.print("Desired: ");  // Print a message to the LCD
-  lcd.print(desiredTemp);  // Print a message to the LCD.
+  lcd.setCursor(0, 1); // Set the cursor to column 0, line 2
+  lcd.print("Desired: ");
+  lcd.print(desiredTemp);
   lcd.print((char)0);
   lcd.print("F");
 
+  // Toggles relay module and displays on/off state
   if (digitalRead(buttonOne) == LOW && toggleRelay == 0) {
     toggleRelay = 1;
-    lcd.setCursor(15, 1); // set the cursor to column 2, line 1
+    lcd.setCursor(15, 1); // Set the cursor to column 15, line 2
     lcd.print("|");
   } else if (digitalRead(buttonOne) == LOW && toggleRelay == 1) {
     toggleRelay = 0;
-    lcd.setCursor(15, 1); // set the cursor to column 2, line 1
+    lcd.setCursor(15, 1); // set the cursor to column 15, line 2
     lcd.print("o");
   }
 
+  // Powers fans only when desired temperature is less than current
   if (toggleRelay == 1) {
     if (temperature > desiredTemp) {
       digitalWrite(relaisPin, HIGH);
