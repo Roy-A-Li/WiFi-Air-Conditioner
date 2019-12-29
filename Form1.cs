@@ -119,5 +119,10 @@ namespace Air_Conditioner_Control
                 toggle--;
             }
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
