@@ -74,6 +74,7 @@ void setup()
   };
   lcd.createChar(0, degreeSymbol);
 
+  // Tries to connect to network, skips if first time setup
   if (firstTime == false) {
     for (int i = 0; i < 10; i++) {
       Serial.print("Connecting to: ");
@@ -93,24 +94,25 @@ void setup()
     }
   }
 
+  // If cannot connect to valid network, prompts WiFi setup
   if (status != WL_CONNECTED) {
     Serial.println("Please set up a network");
     listNetworks();
     status = WiFi.beginAP(apSsid, apPass);
     delay(5000);
 
+    // Notifies need for WiFi network setup via AP
     lcd.clear();
-    lcd.setCursor(0, 0); // Set the cursor to column 1, line 1
-    lcd.print("Please set up a"); // Idle while connecting to WiFi
-    lcd.setCursor(0, 1); // Set the cursor to column 1, line 1
-    lcd.print("WiFi network"); // Idle while connecting to WiFi
+    lcd.setCursor(0, 0);
+    lcd.print("Please set up a");
+    lcd.setCursor(0, 1);
+    lcd.print("WiFi network");
     delay(5000);
-
     lcd.clear();
-    lcd.setCursor(0, 0); // Set the cursor to column 1, line 1
-    lcd.print("WiFi setup pass:"); // Idle while connecting to WiFi
-    lcd.setCursor(0, 1); // Set the cursor to column 1, line 1
-    lcd.print("123456789"); // Idle while connecting to WiFi
+    lcd.setCursor(0, 0);
+    lcd.print("WiFi setup pass:");
+    lcd.setCursor(0, 1);
+    lcd.print("123456789");
     delay(5000);
 
     server.begin();
@@ -118,18 +120,18 @@ void setup()
   } else {
     Serial.print("You're connected to the network");
 
+    // Notifies successful WiFi connection and displays local ip
     lcd.clear();
-    lcd.setCursor(0, 0); // Set the cursor to column 1, line 1
-    lcd.print("WiFi connection"); // Idle while connecting to WiFi
-    lcd.setCursor(0, 1); // Set the cursor to column 1, line 1
-    lcd.print("successful!"); // Idle while connecting to WiFi
+    lcd.setCursor(0, 0);
+    lcd.print("WiFi connection");
+    lcd.setCursor(0, 1);
+    lcd.print("successful!");
     delay(5000);
-
     lcd.clear();
-    lcd.setCursor(0, 0); // Set the cursor to column 1, line 1
-    lcd.print("Your WiFi IP:"); // Idle while connecting to WiFi
-    lcd.setCursor(0, 1); // Set the cursor to column 1, line 1
-    lcd.print(WiFi.localIP()); // Idle while connecting to WiFi
+    lcd.setCursor(0, 0);
+    lcd.print("Your WiFi IP:");
+    lcd.setCursor(0, 1);
+    lcd.print(WiFi.localIP());
     delay(10000);
 
     server.begin();
@@ -139,7 +141,7 @@ void setup()
 
 void loop()
 {
-  WiFiClient client = server.available();   // listen for incoming clients
+  WiFiClient client = server.available(); // Listen for incoming clients
 
   if (client) {
     Serial.println("NEW CLIENT");
@@ -156,6 +158,7 @@ void loop()
             client.println("Content-type:text/html");
             client.println();
             if (status == WL_AP_LISTENING) {
+              // Scans and displays avaiable nearby networks
               if (passPage == false) {
                 for (int curNetwork = 0; curNetwork < numSsid; curNetwork++) {
                   client.print(WiFi.SSID(curNetwork));
@@ -167,6 +170,7 @@ void loop()
                   client.print("\">CONNECT</a><br>");
                 }
               } else {
+                // Asks for password after choosing network
                 client.print("<form>");
                 client.print("<label for=\"pass\">WiFi Password: </label>");
                 client.print("<input type=\"password\" id=\"pass\" name=\"password\" size =\"50\" method=\"post\">");
@@ -177,7 +181,7 @@ void loop()
               client.println();
               break;
             } else {
-              // Content of HTTP response
+              // Control machine via HTTP responses
               client.print("Click <a href=\"/relayOn\">here</a> turn the relay on<br>");
               client.print("Click <a href=\"/relayOff\">here</a> turn the relay off<br>");
               client.print("Click <a href=\"/tempInc\">here</a> increase temperature<br>");
@@ -191,8 +195,10 @@ void loop()
         } else if (c != '\r') { // If client client gives request, add to currentLine
           currentLine += c;
         }
+        // When connected to setup AP
         if (status == WL_AP_LISTENING) {
           if (passPage == false) {
+            // Checks if HTTP request contains valid network SSID
             for (int curNetwork = 0; curNetwork < numSsid; curNetwork++) {
               String httpGet = "GET /";
               httpGet.concat(curNetwork);
@@ -203,6 +209,7 @@ void loop()
               }
             }
           } else {
+            // Parses HTTP request for network password and stores it
             if (currentLine.indexOf("?password=") > 0 && currentLine.endsWith(" HTTP/1.1") && passFound == false) {
               int passStartIndex = currentLine.indexOf("?password=") + 10;
               int passEndIndex = currentLine.indexOf(" HTTP/1.1");
@@ -211,7 +218,9 @@ void loop()
               }
               passFound = true;
             }
+            // When valid password is found
             if (passFound == true) {
+              // Resets machine and tries to connect to network chosen by user
               String networkName = WiFi.SSID(selectedNetwork);
               networkName.toCharArray(ssid, networkName.length() + 1);
               Serial.println(networkName);
@@ -225,7 +234,7 @@ void loop()
             }
           }
         } else {
-          // Check client request
+          // Check HTTP requests for controlling machine
           if (currentLine.endsWith("GET /relayOn")) {
             toggleRelay = 1;
           }
@@ -303,6 +312,7 @@ void loop()
   delay(220);
 }
 
+// Prints WiFi info to serial monitor
 void wifiInfo() {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
@@ -313,6 +323,7 @@ void wifiInfo() {
   Serial.println(ip);
 }
 
+// Scans and lists nearby networks to serial monitor
 void listNetworks() {
   // scan for nearby networks:
   numSsid = WiFi.scanNetworks();
