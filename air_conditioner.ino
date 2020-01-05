@@ -123,7 +123,14 @@ void setup()
     lcd.print("WiFi connection"); // Idle while connecting to WiFi
     lcd.setCursor(0, 1); // Set the cursor to column 1, line 1
     lcd.print("successful!"); // Idle while connecting to WiFi
-    delay(3000);
+    delay(5000);
+
+    lcd.clear();
+    lcd.setCursor(0, 0); // Set the cursor to column 1, line 1
+    lcd.print("Your WiFi IP:"); // Idle while connecting to WiFi
+    lcd.setCursor(0, 1); // Set the cursor to column 1, line 1
+    lcd.print(WiFi.localIP()); // Idle while connecting to WiFi
+    delay(10000);
 
     server.begin();
     wifiInfo();

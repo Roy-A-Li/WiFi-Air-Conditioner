@@ -19,8 +19,8 @@ namespace Air_Conditioner_Control
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-
         public static int toggle = 0;
+        public static string ipAddress = "";
 
         [DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd,
@@ -45,14 +45,16 @@ namespace Air_Conditioner_Control
 
         private void incTemp_Click(object sender, EventArgs e)
         {
-            WebRequest request = WebRequest.Create("http://acserver/tempInc"); // Replace with static web server IP
+            WebRequest request = WebRequest.Create("http://" + ipAddress + "/tempInc");
+            request.Timeout = 30000;
             WebResponse response = request.GetResponse();
             response.Close();
         }
 
         private void decTemp_Click(object sender, EventArgs e)
         {
-            WebRequest request = WebRequest.Create("http://acserver/tempDec");
+            WebRequest request = WebRequest.Create("http://" + ipAddress + "/tempDec");
+            request.Timeout = 30000;
             WebResponse response = request.GetResponse();
             response.Close();
         }
@@ -107,14 +109,16 @@ namespace Air_Conditioner_Control
 
             if (toggle == 0)
             {
-                request = WebRequest.Create("http://acserver/relayOn");
+                request = WebRequest.Create("http://" + ipAddress + "/relayOn");
                 response = request.GetResponse();
+                request.Timeout = 30000;
                 response.Close();
                 toggle++;
             } else
             {
-                request = WebRequest.Create("http://acserver/relayOff");
+                request = WebRequest.Create("http://" + ipAddress + "/relayOff");
                 response = request.GetResponse();
+                request.Timeout = 30000;
                 response.Close();
                 toggle--;
             }
@@ -123,6 +127,11 @@ namespace Air_Conditioner_Control
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ipAddress = enterIp.Text;
         }
     }
 }
