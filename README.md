@@ -1,7 +1,7 @@
 # WiFi-Air-Conditioner
 Software end of AC unit
 
-<img src="https://i.imgur.com/XBztfJC.jpg" height="350" width="350"> <img src="https://i.imgur.com/r7gg6zu.jpg" height="350" width="415">
+<img src="https://i.imgur.com/XBztfJC.jpg" height="350" width="350"> <img src="https://i.imgur.com/LDYVAp0.jpg" height="350" width="400">
 
 ## Overview
 This project is a portable WiFi controlled air conditioner with a working Windows desktop application that is able to perform basic 
