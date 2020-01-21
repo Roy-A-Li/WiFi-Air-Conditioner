@@ -1,6 +1,8 @@
 # WiFi-Air-Conditioner
 Software end of AC unit
 
+<img src="https://i.imgur.com/XBztfJC.jpg" height="350" width="350"> <img src="https://i.imgur.com/r7gg6zu.jpg" height="350" width="415">
+
 ## Overview
 This project is a portable WiFi controlled air conditioner with a working Windows desktop application that is able to perform basic 
 functionalities, such as toggling power or changing the temperature. It utilizes the Arduino Uno WiFi Rev2, as well as various other
