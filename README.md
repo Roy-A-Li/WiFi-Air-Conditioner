@@ -23,7 +23,7 @@ physical unit in some way. Through the desktop application, the user then sends 
 ## Stage of Project
 The core functionalities are complete, but there are several improvements to be made, such as:
 - Device to cloud implementation to allow for remote communcation (outside of WiFi network)
-- Captive portal for first time setup
+- Captive portal for first time setup and greater security during device-to-device communication
 - Save WiFi networks in EEProm and hash passwords for increased security
 - Create SQL database of previously logged IP addresses
 - Allow user to set times of when unit is turned on automatically
