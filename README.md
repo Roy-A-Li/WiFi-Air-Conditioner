@@ -8,6 +8,9 @@ This project is a portable WiFi controlled air conditioner with a working Window
 functionalities, such as toggling power or changing the temperature. It utilizes the Arduino Uno WiFi Rev2, as well as various other
 modules for key functionalities.
 
+## Demo of Prototype
+[![Watch the video](https://i.imgur.com/8cCr7Nw.png)](https://www.youtube.com/watch?v=rSMJzoI1zgk)
+
 ## How it Works
 During the first time setup, the AC unit will create an access point for the user to connect to, in which he/she will be brought to a
 web server that scans for nearby networks. Next, the user will select and connect to the desired network, communicating to the Arduino
